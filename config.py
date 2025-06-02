@@ -9,5 +9,7 @@ class Config:
     FENIX_LOGIN_URL = os.getenv('FENIX_LOGIN_URL')
     SUCCESS_LOGIN_STATUS = int(os.getenv('SUCCESS_LOGIN_STATUS', 200))
     FENIX_PROTECTED_URL = os.getenv('FENIX_PROTECTED_URL')
+    SITE_MAP_URL = os.getenv('SITE_MAP_URL')
+    BASE_URL = os.getenv('BASE_URL')
 
     
