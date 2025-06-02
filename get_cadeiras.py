@@ -1,56 +1,101 @@
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
+import pickle
 from config import Config
+from login import do_login
 
+# Configuração
 app_config = Config()
 
-# Base URL para acessar as páginas de disciplinas
-BASE_PAGE_URL = "https://fenixlbg.isutc.ac.mz:9443/isutc/cursos/{}/paginas-de-disciplinas"
+BASE_DISCIPLINAS_URL = "https://fenixlbg.isutc.ac.mz:9443/isutc/cursos/{}/paginas-de-disciplinas"
+BASE_AVALIACAO_URL = "https://fenixlbg.isutc.ac.mz:9443/isutc/disciplinas/{}/Ano%20Lectivo%202025/1-semestre/avaliacao"
 BASE_DOMAIN = "https://fenixlbg.isutc.ac.mz:9443"
 
-# Lê os cursos do arquivo Excel
-cursos_df = pd.read_excel(app_config.COURSES_FILE_NAME)
+# Link corrigido de performance (domínio final usado pelo estudante)
+BASE_PERFORMANCE = "https://fenixlbb.isutc.ac.mz:8443/isutc/publico/executionCourse.do?method=marks&executionCourseID={}"
 
-disciplinas = []
+COOKIES_FILE = "cookies.pkl"
 
-# Para cada curso no Excel
-for _, row in cursos_df.iterrows():
-    cu_code = row["cu_code"]
-    cu_link = BASE_PAGE_URL.format(cu_code.lower())
-
+def load_authenticated_session():
+    s = requests.Session()
     try:
-        response = requests.get(cu_link, timeout=10)
-        if response.status_code != 200:
-            print(f"[Erro] Falha ao acessar {cu_link}")
-            continue
+        with open(COOKIES_FILE, 'rb') as f:
+            cookies = pickle.load(f)
+            s.cookies.update(cookies)
+        test = s.get("https://fenixlbg.isutc.ac.mz:9443/isutc/siteMap.do", timeout=5)
+        if "Login" in test.text:
+            raise Exception("Sessão expirada")
+    except Exception:
+        print("🔄 Sessão inválida, autenticando novamente...")
+        s = do_login()
+        with open(COOKIES_FILE, 'wb') as f:
+            pickle.dump(s.cookies, f)
+    return s
 
-        soup = BeautifulSoup(response.text, "html.parser")
+def fetch_disciplinas():
+    session = load_authenticated_session()
+    cursos_df = pd.read_excel("cursos.xlsx")
+    disciplinas = []
 
-        # Procura todos os links para disciplinas
-        links = soup.select("table a[href*='/disciplinas/']")
+    for _, row in cursos_df.iterrows():
+        cu_code = row["cu_code"]
+        cu_link = BASE_DISCIPLINAS_URL.format(cu_code.lower())
 
-        for a in links:
-            ca_nome = a.get_text(strip=True)
-            ca_link = a.get("href")
-            if not ca_nome or not ca_link:
+        try:
+            response = session.get(cu_link, timeout=10)
+            if response.status_code != 200:
+                print(f"[Erro] Falha ao acessar {cu_link}")
                 continue
 
-            # Extrair o código da cadeira da URL
-            ca_code = ca_link.split("/disciplinas/")[1].split("/")[0]
+            soup = BeautifulSoup(response.text, "html.parser")
+            links = soup.select("table a[href*='/disciplinas/']")
 
-            disciplinas.append({
-                "ca_nome": ca_nome,
-                "ca_code": ca_code,
-                "ca_link": ca_link if ca_link.startswith("http") else BASE_DOMAIN + ca_link,
-                "ca_cucode": cu_code
-            })
+            for a in links:
+                ca_nome = a.get_text(strip=True)
+                ca_link = a.get("href")
+                if not ca_nome or not ca_link:
+                    continue
 
-        print(f"[OK] {cu_code} - {len(links)} disciplinas encontradas.")
+                ca_code = ca_link.split("/disciplinas/")[1].split("/")[0]
+                full_ca_link = ca_link if ca_link.startswith("http") else BASE_DOMAIN + ca_link
 
-    except Exception as e:
-        print(f"[Erro] {cu_code}: {e}")
+                # Buscar link de rendimento académico
+                avaliacao_url = BASE_AVALIACAO_URL.format(ca_code)
+                perf_link = ""
+                try:
+                    perf_res = session.get(avaliacao_url, timeout=10)
+                    if perf_res.status_code == 200:
+                        perf_soup = BeautifulSoup(perf_res.text, "html.parser")
+                        perf_anchor = perf_soup.find("a", href=True, string="Rendimento académico")
+                        if perf_anchor:
+                            perf_href = perf_anchor["href"]
+                            if "executionCourseID=" in perf_href:
+                                execution_id = perf_href.split("executionCourseID=")[-1]
+                                perf_link = BASE_PERFORMANCE.format(execution_id)
+                    else:
+                        print(f"  [!] Avaliação indisponível para {ca_code}")
+                except Exception as e:
+                    print(f"  [x] Erro ao acessar avaliação de {ca_code}: {e}")
+                    perf_link = ""
 
-# Salvar os dados em um ficheiro Excel
-df = pd.DataFrame(disciplinas)
-df.to_excel("cadeiras.xlsx", index=False)
+                disciplinas.append({
+                    "ca_nome": ca_nome,
+                    "ca_code": ca_code,
+                    "ca_link": full_ca_link,
+                    "ca_cucode": cu_code,
+                    "ca_performance": perf_link
+                })
+
+            print(f"[OK] {cu_code} - {len(links)} disciplinas processadas.")
+
+        except Exception as e:
+            print(f"[Erro] {cu_code} - {e}")
+
+    # Salva em Excel
+    df = pd.DataFrame(disciplinas)
+    df.to_excel(app_config.SUBJECTS_FILE_NAME, index=False)
+    print("✅ Ficheiro 'cadeiras.xlsx' salvo com sucesso.")
+
+if __name__ == "__main__":
+    fetch_disciplinas()

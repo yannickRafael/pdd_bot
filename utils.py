@@ -16,3 +16,9 @@ def extract_hidden_execution(text):
         return match.group(1)
     else:
         return None
+    
+def extract_jsessionid(cookies):
+    for c in cookies:
+        if c.name.lower().startswith("jsessionid"):
+            return c.value
+    raise Exception("JSESSIONID não encontrado nos cookies.")

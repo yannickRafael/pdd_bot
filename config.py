@@ -11,5 +11,7 @@ class Config:
     FENIX_PROTECTED_URL = os.getenv('FENIX_PROTECTED_URL')
     SITE_MAP_URL = os.getenv('SITE_MAP_URL')
     BASE_URL = os.getenv('BASE_URL')
-
+    COURSES_FILE_NAME= os.getenv('COURSES_FILE_NAME')
+    SUBJECTS_FILE_NAME= os.getenv('SUBJECTS_FILE_NAME')
+    COOKIES_FILE_NAME= os.getenv('COOKIES_FILE_NAME')
     
