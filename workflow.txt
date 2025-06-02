@@ -1,0 +1,32 @@
+script 1:
+	buscar a url de login
+	efectuar login com as credenciais
+	guardar dados de autenticacao
+	guardar url da pagina 'site map'
+	
+script 2:
+	buscar todos cursos existentes na pagina 'site map'
+	usar a pdd_api para guardar na base de dados
+	guardar o link de cada curso
+	
+script 3:
+	iterar sobre cada cursos
+	para cada curso buscar todas as cadeiras existentes
+	guardar todas cadeiras existentes e seus links
+	guardar na bd
+
+script 4:
+	iterar sobre todas cadeiras
+	para cadeira, buscar a pagina das notas
+	buscar todas as avaliacoes existentes e guardar
+	para cada pagina de notas iterar sobre todas tabelas de notas
+	para cada tabela, iterar sobre cada estudante e guardar
+	para cada estudante, pegar as avaliacoes que tem nessa cadeira, junto das notas
+	construir estudantes
+	guardar as estudantes na base de dados
+	contruir as avaliacoes
+	guardar as avaliacoes na base de dados
+	construir a performance com base nos pares avaliacao-estudante e  a sua nota
+	guardar a performance na base de dados
+	
+	
