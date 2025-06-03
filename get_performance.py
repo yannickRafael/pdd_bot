@@ -36,7 +36,7 @@ def load_authenticated_session():
         if "Login" in r.text:
             raise Exception("Sessão expirada")
     except Exception:
-        print("🔄 Sessão inválida, autenticando novamente...")
+        print("Sessão inválida, autenticando novamente...")
         s = do_login()
         with open(COOKIES_FILE, 'wb') as f:
             pickle.dump(s.cookies, f)
@@ -61,7 +61,7 @@ def extract_performance_data():
         try:
             r = session.get(perf_url, timeout=10)
             if r.status_code != 200:
-                print(f"  ❌ Falha ao acessar {perf_url}")
+                print(f"Falha ao acessar {perf_url}")
                 continue
 
             soup = BeautifulSoup(r.text, "html.parser")
@@ -113,16 +113,16 @@ def extract_performance_data():
                             except ValueError:
                                 pass  # Ignora notas inválidas
 
-            print(f"✅ {ca_code} processado.")
+            print(f"{ca_code} processado.")
 
         except Exception as e:
-            print(f"  ⚠️ Erro ao processar {ca_code}: {e}")
+            print(f"Erro ao processar {ca_code}: {e}")
 
     # Salvar Excel
     pd.DataFrame(avaliacoes).to_excel("avaliacao.xlsx", index=False)
     pd.DataFrame(list(estudantes.items()), columns=["e_code", "e_nome"]).to_excel("estudantes.xlsx", index=False)
     pd.DataFrame(desempenho).to_excel("performance.xlsx", index=False)
-    print("📄 Ficheiros avaliacao.xlsx, estudantes.xlsx e performance.xlsx gerados com sucesso.")
+    print("Ficheiros avaliacao.xlsx, estudantes.xlsx e performance.xlsx gerados com sucesso.")
 
 
 if __name__ == "__main__":

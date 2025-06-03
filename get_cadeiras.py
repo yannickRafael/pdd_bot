@@ -27,7 +27,7 @@ def load_authenticated_session():
         if "Login" in test.text:
             raise Exception("Sessão expirada")
     except Exception:
-        print("🔄 Sessão inválida, autenticando novamente...")
+        print("Sessão inválida, autenticando novamente...")
         s = do_login()
         with open(COOKIES_FILE, 'wb') as f:
             pickle.dump(s.cookies, f)
@@ -95,7 +95,7 @@ def fetch_disciplinas():
     # Salva em Excel
     df = pd.DataFrame(disciplinas)
     df.to_excel(app_config.SUBJECTS_FILE_NAME, index=False)
-    print("✅ Ficheiro 'cadeiras.xlsx' salvo com sucesso.")
+    print("Ficheiro 'cadeiras.xlsx' salvo com sucesso.")
 
 if __name__ == "__main__":
     fetch_disciplinas()

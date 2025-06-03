@@ -23,7 +23,7 @@ def clean_and_export_files():
     for key, (input_file, output_file) in files.items():
         path = Path(input_file)
         if path.exists():
-            print(f"🧹 Limpando {input_file}...")
+            print(f"Limpando {input_file}...")
             df = pd.read_excel(path)
 
             # Normaliza nomes de colunas para evitar problemas com maiúsculas ou espaços
@@ -41,9 +41,9 @@ def clean_and_export_files():
             df = df[[c for c in clean_columns if c in df.columns]]
 
             df.to_excel(output_file, index=False)
-            print(f"✅ {output_file} criado com sucesso.")
+            print(f"{output_file} criado com sucesso.")
         else:
-            print(f"⚠️ Ficheiro {input_file} não encontrado.")
+            print(f"Ficheiro {input_file} não encontrado.")
 
 if __name__ == "__main__":
     clean_and_export_files()
