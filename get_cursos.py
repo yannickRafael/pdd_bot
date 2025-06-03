@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 from config import Config
+from utils import save_to_excel
 
 app_config = Config()   
 
@@ -44,12 +45,6 @@ def fetch_courses():
                 continue
 
     return courses
-
-
-def save_to_excel(courses, filename="cursos.xlsx"):
-    df = pd.DataFrame(courses)
-    df.to_excel(filename, index=False)
-    print(f"Arquivo Excel salvo com sucesso como '{filename}'")
 
 
 cursos = fetch_courses()
