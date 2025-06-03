@@ -1,6 +1,7 @@
 import re
-
+from config import Config
 import pandas as pd
+app_config = Config()
 
 
 def extract_hidden_lt(text):
@@ -25,7 +26,7 @@ def extract_jsessionid(cookies):
             return c.value
     raise Exception("JSESSIONID não encontrado nos cookies.")
 
-def save_to_excel(courses, filename="cursos.xlsx"):
+def save_to_excel(courses, filename=app_config.COURSES_FILE_NAME):
     df = pd.DataFrame(courses)
     df.to_excel(filename, index=False)
     print(f"Arquivo Excel salvo com sucesso como '{filename}'")
