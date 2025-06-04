@@ -14,4 +14,20 @@ class Config:
     COURSES_FILE_NAME= os.getenv('COURSES_FILE_NAME')
     SUBJECTS_FILE_NAME= os.getenv('SUBJECTS_FILE_NAME')
     COOKIES_FILE_NAME= os.getenv('COOKIES_FILE_NAME')
+
+    A_CODE_NOMES = {
+    "TPC1": "Trabalho Para Casa 1",
+    "TPC2": "Trabalho Para Casa 2",
+    "MT1": "Mini-Teste 1",
+    "MT2": "Mini-Teste 2",
+    "T1": "Teste 1",
+    "T2": "Teste 2",
+    "TI1": "Teste Intermédio 1",
+    "TG1": "Trabalho de Grupo 1",
+    "TG2": "Trabalho de Grupo 2",
+    "TL1": "Trabalho Laboratorial 1",
+    "TP1": "Trabalho Prático 1",
+    "EX1": "Exame 1",
+    "EX2": "Exame 2",
+}
     
