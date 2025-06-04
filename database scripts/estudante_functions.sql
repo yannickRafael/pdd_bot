@@ -1,3 +1,32 @@
+CREATE OR REPLACE FUNCTION get_estudanye(
+    p_e_code VARCHAR
+)
+RETURNS INTEGER AS $$
+DECLARE
+    v_e_id INTEGER;
+BEGIN
+    IF p_e_code IS NULL THEN
+        RAISE EXCEPTION 'e_code not provided'
+        USING ERRCODE = 'P0001', DETAIL = 'E-CODE-MP';
+    END IF;
+
+    SELECT e_id INTO v_e_id
+    FROM e_estudante
+    WHERE e_code = p_e_code AND e_is_valid IS TRUE;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'e_code % not found or not valid', p_e_code
+        USING ERRCODE = 'P0001', DETAIL = 'E-CODE-NV';
+    END IF;
+
+    RETURN v_e_id;
+
+EXCEPTION WHEN OTHERS THEN
+    RAISE;
+END;
+$$ LANGUAGE plpgsql;
+
+
 CREATE OR REPLACE FUNCTION create_estudante(
 	p_e_nome VARCHAR,
 	p_e_code VARCHAR,
