@@ -35,7 +35,7 @@ def load_authenticated_session():
 
 def fetch_disciplinas():
     session = load_authenticated_session()
-    cursos_df = pd.read_excel("cursos.xlsx")
+    cursos_df = pd.read_excel(app_config.COURSES_FILE_NAME)
     disciplinas = []
 
     for _, row in cursos_df.iterrows():
