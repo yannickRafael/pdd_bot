@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION get_estudanye(
+CREATE OR REPLACE FUNCTION get_estudante(
     p_e_code VARCHAR
 )
 RETURNS INTEGER AS $$

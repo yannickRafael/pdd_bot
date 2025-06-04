@@ -25,7 +25,7 @@ class Estudante_Service:
             message, code = get_error_message(e.diag.message_detail)
             if code == 409:
                 try:
-                    get_id_query = "SELECT get_estudante_id_by_code(%s);"
+                    get_id_query = "SELECT get_estudante(%s);"
                     db.execute(get_id_query, (e_code,))
                     e_id = db.fetchone()[0]
                     return Estudante_Service.update_estudante(e_id, e_nome, e_code, e_created_by)

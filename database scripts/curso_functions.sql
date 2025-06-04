@@ -1,3 +1,27 @@
+CREATE OR REPLACE FUNCTION get_curso(p_cu_code VARCHAR)
+RETURNS INTEGER AS $$
+DECLARE
+    v_cu_id INTEGER;
+BEGIN
+    IF p_cu_code IS NULL THEN
+        RAISE EXCEPTION 'cu_code not provided'
+        USING ERRCODE = 'P0001', DETAIL = 'CU-CODE-MP';
+    END IF;
+
+    SELECT cu_id INTO v_cu_id FROM cu_curso
+    WHERE cu_code = p_cu_code AND cu_is_valid IS TRUE;
+
+    IF v_cu_id IS NULL THEN
+        RAISE EXCEPTION 'cu_code not found or not valid: %', p_cu_code
+        USING ERRCODE = 'P0001', DETAIL = 'CU-CODE-NF';
+    END IF;
+
+    RETURN v_cu_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
 CREATE OR REPLACE FUNCTION create_curso(
     p_cu_nome VARCHAR,
     p_cu_code VARCHAR,
