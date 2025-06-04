@@ -1,7 +1,7 @@
 from flask import jsonify
 import psycopg2
 from database import get_db_connection
-from utils.utils import get_error_message
+from utils import get_error_message
 
 class Performance_Service:
 
@@ -24,13 +24,16 @@ class Performance_Service:
         except psycopg2.Error as e:
             print(str(e))
             message, code = get_error_message(e.diag.message_detail)
-            db.connection.rollback()
-            return jsonify({
-                "message": message,
-                "success": False,
-                "status": code,
-                "data": None
-            }), code
+            if code == 409:
+                return Performance_Service.update_performance(None, p_nota, p_created_by)
+            else:
+                db.connection.rollback()
+                return jsonify({
+                    "message": message,
+                    "success": False,
+                    "status": code,
+                    "data": None
+                }), code
         except Exception as e:
             print(str(e))
             message, code = get_error_message(e.diag.message_detail)

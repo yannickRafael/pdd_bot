@@ -1,7 +1,7 @@
 import psycopg2
 from database import get_db_connection
 from flask import jsonify
-from utils.utils import get_error_message
+from utils import get_error_message
 
 class Cadeira_Service:
 
@@ -23,13 +23,16 @@ class Cadeira_Service:
         except psycopg2.Error as e:
             print(str(e))
             message, code = get_error_message(e.diag.message_detail)
-            db.connection.rollback()
-            return jsonify({
-                "message": message,
-                "success": False,
-                "status": code,
-                "data": None
-            }), code
+            if code == 409:
+                return Cadeira_Service.update_cadeira(None, ca_nome, ca_code, ca_cuid, ca_link, ca_created_by)
+            else:
+                db.connection.rollback()
+                return jsonify({
+                    "message": message,
+                    "success": False,
+                    "status": code,
+                    "data": None
+                }), code
         except Exception as e:
             print(str(e))
             message, code = get_error_message("")

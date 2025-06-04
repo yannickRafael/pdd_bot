@@ -1,7 +1,7 @@
 import psycopg2
 from database import get_db_connection
 from flask import jsonify
-from utils.utils import get_error_message
+from utils import get_error_message
 
 class Curso_Service:
     
@@ -25,13 +25,16 @@ class Curso_Service:
         except psycopg2.Error as e:
             print(str(e))
             message, code = get_error_message(e.diag.message_detail)
-            db.connection.rollback()
-            return jsonify({
-                "message": message,
-                "success": False,
-                "status": code,
-                "data": None
-            }), code
+            if code == 409:
+                return Curso_Service.update_curso(None, cu_nome, cu_code, cu_created_by)
+            else:
+                db.connection.rollback()
+                return jsonify({
+                    "message": message,
+                    "success": False,
+                    "status": code,
+                    "data": None
+                }), code
         except Exception as e:
             print(str(e))
             message, code = get_error_message("")

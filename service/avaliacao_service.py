@@ -23,13 +23,16 @@ class Avaliacao_Service:
         except psycopg2.Error as e:
             print(str(e))
             message, code = get_error_message(e.diag.message_detail)
-            db.connection.rollback()
-            return jsonify({
-                "message": message,
-                "success": False,
-                "status": code,
-                "data": None
-            }), code
+            if code == 409:
+                return Avaliacao_Service.update_avaliacao(None, a_nome, a_code, a_caid, a_nota_max, a_created_by)
+            else:
+                db.connection.rollback()
+                return jsonify({
+                    "message": message,
+                    "success": False,
+                    "status": code,
+                    "data": None
+                }), code
         except Exception as e:
             print("error: "+str(e))
             message, code = get_error_message("")

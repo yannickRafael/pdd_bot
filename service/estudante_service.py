@@ -1,7 +1,7 @@
 import psycopg2
 from database import get_db_connection
 from flask import jsonify
-from utils.utils import get_error_message
+from utils import get_error_message
 class Estudante_Service:
     
     def create_estudante(e_nome, e_code, e_created_by):
@@ -23,13 +23,17 @@ class Estudante_Service:
                 }), 201
         except psycopg2.Error as e:
             message, code = get_error_message(e.diag.message_detail)
-            db.connection.rollback()
-            return jsonify({
-                "message": message,
-                "success": False,
-                "status": code,
-                "data": None
-            }), code
+            if code == 409:
+                return Estudante_Service.update_estudante(None, e_nome, e_code, e_created_by)
+            else:
+                db.connection.rollback()
+                return jsonify({
+                    "message": message,
+                    "success": False,
+                    "status": code,
+                    "data": None
+                }), code
+            
         except Exception as e: 
             print(str(e))
             message, code = get_error_message("")
