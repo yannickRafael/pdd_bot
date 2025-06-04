@@ -28,5 +28,5 @@ def extract_jsessionid(cookies):
 
 def save_to_excel(courses, filename=app_config.COURSES_FILE_NAME):
     df = pd.DataFrame(courses)
-    df.to_excel(filename, index=False)
+    df.to_excel('files/'+filename, index=False)
     print(f"Arquivo Excel salvo com sucesso como '{filename}'")
