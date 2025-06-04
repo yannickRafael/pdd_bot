@@ -1,3 +1,26 @@
+CREATE OR REPLACE FUNCTION get_cadeira(p_ca_code VARCHAR)
+RETURNS INTEGER AS $$
+DECLARE
+    v_ca_id INTEGER;
+BEGIN
+    IF p_ca_code IS NULL THEN
+        RAISE EXCEPTION 'ca_code not provided'
+        USING ERRCODE = 'P0001', DETAIL = 'CA-CODE-MP';
+    END IF;
+
+    SELECT ca_id INTO v_ca_id FROM ca_cadeira
+    WHERE ca_code = p_ca_code AND ca_is_valid IS TRUE;
+
+    IF v_ca_id IS NULL THEN
+        RAISE EXCEPTION 'ca_code not found or not valid: %', p_ca_code
+        USING ERRCODE = 'P0001', DETAIL = 'CA-CODE-NF';
+    END IF;
+
+    RETURN v_ca_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
 CREATE OR REPLACE FUNCTION create_cadeira(
     p_ca_nome VARCHAR,
     p_ca_code VARCHAR,

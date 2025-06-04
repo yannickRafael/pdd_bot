@@ -24,7 +24,20 @@ class Avaliacao_Service:
             print(str(e))
             message, code = get_error_message(e.diag.message_detail)
             if code == 409:
-                return Avaliacao_Service.update_avaliacao(None, a_nome, a_code, a_caid, a_nota_max, a_created_by)
+                try:
+                    get_id_query = "SELECT get_avaliacao(%s);"
+                    db.execute(get_id_query, (a_code,))
+                    a_id = db.fetchone()[0]
+                    return Avaliacao_Service.update_avaliacao(a_id, a_nome, a_code, a_caid, a_nota_max, a_created_by)
+                except Exception as ex:
+                    print(str(ex))
+                    db.connection.rollback()
+                    return jsonify({
+                        "message": "Could not update existing avaliacao.",
+                        "success": False,
+                        "status": 500,
+                        "data": None
+                    }), 500
             else:
                 db.connection.rollback()
                 return jsonify({

@@ -1,3 +1,26 @@
+CREATE OR REPLACE FUNCTION get_avaliacao(p_a_code VARCHAR)
+RETURNS INTEGER AS $$
+DECLARE
+    v_a_id INTEGER;
+BEGIN
+    IF p_a_code IS NULL THEN
+        RAISE EXCEPTION 'a_code not provided'
+        USING ERRCODE = 'P0001', DETAIL = 'A-CODE-MP';
+    END IF;
+
+    SELECT a_id INTO v_a_id FROM a_avaliacao
+    WHERE a_code = p_a_code AND a_is_valid IS TRUE;
+
+    IF v_a_id IS NULL THEN
+        RAISE EXCEPTION 'a_code not found or not valid: %', p_a_code
+        USING ERRCODE = 'P0001', DETAIL = 'A-CODE-NF';
+    END IF;
+
+    RETURN v_a_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
 CREATE OR REPLACE FUNCTION create_avaliacao(
     p_a_nome VARCHAR,
     p_a_code VARCHAR,
