@@ -32,7 +32,7 @@ def load_authenticated_session():
             cookies = pickle.load(f)
             s.cookies.update(cookies)
         # Testa validade
-        r = s.get("https://fenixlbg.isutc.ac.mz:9443/isutc/siteMap.do", timeout=5)
+        r = s.get(app_config.SITE_MAP_URL, timeout=5)
         if "Login" in r.text:
             raise Exception("Sessão expirada")
     except Exception:
