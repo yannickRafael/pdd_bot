@@ -1,3 +1,4 @@
+from pathlib import Path
 import re
 from config import Config
 import pandas as pd
@@ -27,6 +28,11 @@ def extract_jsessionid(cookies):
     raise Exception("JSESSIONID não encontrado nos cookies.")
 
 def save_to_excel(courses, filename=app_config.COURSES_FILE_NAME):
+    # Garante que o diretório exista
+    output_path = Path(filename)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Salva o DataFrame em Excel
     df = pd.DataFrame(courses)
-    df.to_excel('files/'+filename, index=False)
+    df.to_excel(output_path, index=False)
     print(f"Arquivo Excel salvo com sucesso como '{filename}'")
