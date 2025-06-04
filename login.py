@@ -4,8 +4,8 @@ import os
 from config import Config
 from utils import extract_hidden_lt, extract_hidden_execution
 
-COOKIE_FILE = "cookies.pkl"
 app_config = Config()
+COOKIE_FILE = app_config.COOKIES_FILE_NAME
 
 
 def save_cookies(session: requests.Session):

@@ -6,7 +6,7 @@ from login import do_login
 from config import Config
 
 app_config = Config()
-COOKIES_FILE = "cookies.pkl"
+COOKIES_FILE = app_config.COOKIES_FILE_NAME
 A_CODE_NOMES = app_config.A_CODE_NOMES
 
 
@@ -42,7 +42,7 @@ def extract_performance_data():
         ca_code = row["ca_code"]
         perf_url = row["ca_performance"]
 
-        print(f"🔍 Acessando {ca_code}...")
+        print(f"A aceder {ca_code}...")
 
         try:
             r = session.get(perf_url, timeout=10)
@@ -105,9 +105,9 @@ def extract_performance_data():
             print(f"Erro ao processar {ca_code}: {e}")
 
     # Salvar Excel
-    pd.DataFrame(avaliacoes).to_excel("avaliacao.xlsx", index=False)
-    pd.DataFrame(list(estudantes.items()), columns=["e_code", "e_nome"]).to_excel("estudantes.xlsx", index=False)
-    pd.DataFrame(desempenho).to_excel("performance.xlsx", index=False)
+    pd.DataFrame(avaliacoes).to_excel(app_config.AVALIACAO_FILE_NAME, index=False)
+    pd.DataFrame(list(estudantes.items()), columns=["e_code", "e_nome"]).to_excel(app_config.STUDENTS_FILE_NAME, index=False)
+    pd.DataFrame(desempenho).to_excel(app_config.PERFORMANCE_FILE_NAME, index=False)
     print("Ficheiros avaliacao.xlsx, estudantes.xlsx e performance.xlsx gerados com sucesso.")
 
 

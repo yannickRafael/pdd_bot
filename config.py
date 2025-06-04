@@ -14,6 +14,9 @@ class Config:
     COURSES_FILE_NAME= os.getenv('COURSES_FILE_NAME')
     SUBJECTS_FILE_NAME= os.getenv('SUBJECTS_FILE_NAME')
     COOKIES_FILE_NAME= os.getenv('COOKIES_FILE_NAME')
+    AVALIACAO_FILE_NAME = os.getenv('AVALIACAO_FILE_NAME')
+    PERFORMANCE_FILE_NAME = os.getenv('PERFORMANCE_FILE_NAME')
+    STUDENTS_FILE_NAME = os.getenv('STUDENTS_FILE_NAME')
 
     A_CODE_NOMES = {
     "TPC1": "Trabalho Para Casa 1",
