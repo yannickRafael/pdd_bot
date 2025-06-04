@@ -26,7 +26,20 @@ class Curso_Service:
             print(str(e))
             message, code = get_error_message(e.diag.message_detail)
             if code == 409:
-                return Curso_Service.update_curso(None, cu_nome, cu_code, cu_created_by)
+                try:
+                    get_id_query = "SELECT get_curso(%s);"
+                    db.execute(get_id_query, (cu_code,))
+                    cu_id = db.fetchone()[0]
+                    return Curso_Service.update_curso(cu_id, cu_nome, cu_code, cu_created_by)
+                except Exception as ex:
+                    print(str(ex))
+                    db.connection.rollback()
+                    return jsonify({
+                        "message": "Could not update existing curso.",
+                        "success": False,
+                        "status": 500,
+                        "data": None
+                    }), 500
             else:
                 db.connection.rollback()
                 return jsonify({
