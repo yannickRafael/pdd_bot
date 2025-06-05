@@ -1,4 +1,3 @@
-from flask import jsonify
 import psycopg2
 from database import get_db_connection
 from utils import get_error_message
@@ -15,35 +14,48 @@ class Performance_Service:
             result = db.fetchone()
             print(result)
             db.connection.commit()
-            return jsonify({
+            return {
                     "message": "Performance created successfully", 
                     "success": True,
                     "status": 201,
                     "data": result
-                }), 201
+                }
         except psycopg2.Error as e:
-            print(str(e))
+            db.connection.rollback()
             message, code = get_error_message(e.diag.message_detail)
             if code == 409:
-                return Performance_Service.update_performance(None, p_nota, p_created_by)
+                try:
+                    db.connection.rollback()
+                    get_id_query = "SELECT get_performance(%s, %s);"
+                    db.execute(get_id_query, (p_eid, p_aid))
+                    p_id = (db.fetchone()).get('get_performance')
+                    return Performance_Service.update_performance(p_id, p_nota, p_created_by)
+                except Exception as ex:
+                    db.connection.rollback()
+                    return {
+                        "message": "Could not update existing curso.",
+                        "success": False,
+                        "status": 500,
+                        "data": None
+                    }
             else:
                 db.connection.rollback()
-                return jsonify({
+                return {
                     "message": message,
                     "success": False,
                     "status": code,
                     "data": None
-                }), code
+                }
         except Exception as e:
             print(str(e))
             message, code = get_error_message(e.diag.message_detail)
             db.connection.rollback()
-            return jsonify({
+            return {
                 "message": message,
                 "success": False,
                 "status": code,
                 "data": None
-            }), code
+            }
         
     def update_performance(p_id, p_nota, p_edited_by):
         """Update existing performance in the database."""
@@ -55,32 +67,32 @@ class Performance_Service:
             result = db.fetchone()
             print(result)
             db.connection.commit()
-            return jsonify({
+            return {
                     "message": "Performance updated successfully", 
                     "success": True,
                     "status": 200,
                     "data": result
-                }), 200
+                }
         except psycopg2.Error as e:
             print(str(e))
             message, code = get_error_message(e.diag.message_detail)
             db.connection.rollback()
-            return jsonify({
+            return {
                 "message": message,
                 "success": False,
                 "status": code,
                 "data": None
-            }), code
+            }
         except Exception as e:
             print(str(e))
             message, code = get_error_message("")
             db.connection.rollback()
-            return jsonify({
+            return {
                 "message": message,
                 "success": False,
                 "status": code,
                 "data": None
-            }), code
+            }
     
     def delete_performance(p_id, p_edited_by):
         """Delete existing performance in the database."""
@@ -92,29 +104,29 @@ class Performance_Service:
             result = db.fetchone()
             print(result)
             db.connection.commit()
-            return jsonify({
+            return {
                     "message": "Performance deleted successfully", 
                     "success": True,
                     "status": 200,
                     "data": result
-                }), 200
+                }
         except psycopg2.Error as e:
             print(str(e))
             message, code = get_error_message(e.diag.message_detail)
             db.connection.rollback()
-            return jsonify({
+            return {
                 "message": message,
                 "success": False,
                 "status": code,
                 "data": None
-            }), code
+            }
         except Exception as e:
             print(str(e))
             message, code = get_error_message("")
             db.connection.rollback()
-            return jsonify({
+            return {
                 "message": message,
                 "success": False,
                 "status": code,
                 "data": None
-            }), code
+            }
