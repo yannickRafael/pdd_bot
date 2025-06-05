@@ -9,7 +9,12 @@ class Performance_Service:
 
         db = get_db_connection()
         try:
-            query = "SELECT * FROM create_performance(%s, %s, %s, %s);"
+            print("DEBUG: p_nota", p_nota)
+            print("DEBUG: p_eid", p_eid)
+            print("DEBUG: p_aid", p_aid)
+            print("DEBUG: p_created_by", p_created_by)
+            
+            query = "SELECT * FROM create_performance(CAST(%s AS INTEGER), CAST(%s AS INTEGER), CAST(%s AS INTEGER), CAST(%s AS INTEGER));"
             db.execute(query, (p_nota, p_eid, p_aid, p_created_by))
             result = db.fetchone()
             print(result)
@@ -35,8 +40,8 @@ class Performance_Service:
                     return {
                         "message": "Could not update existing curso.",
                         "success": False,
-                        "status": 500,
-                        "data": None
+                        "status": str(ex),
+                        "data": str(ex)
                     }
             else:
                 db.connection.rollback()
@@ -44,7 +49,7 @@ class Performance_Service:
                     "message": message,
                     "success": False,
                     "status": code,
-                    "data": None
+                    "data": str(e)
                 }
         except Exception as e:
             print(str(e))
@@ -54,7 +59,7 @@ class Performance_Service:
                 "message": message,
                 "success": False,
                 "status": code,
-                "data": None
+                "data": str(e)
             }
         
     def update_performance(p_id, p_nota, p_edited_by):
@@ -81,7 +86,7 @@ class Performance_Service:
                 "message": message,
                 "success": False,
                 "status": code,
-                "data": None
+                "data": str(e)
             }
         except Exception as e:
             print(str(e))
@@ -91,7 +96,7 @@ class Performance_Service:
                 "message": message,
                 "success": False,
                 "status": code,
-                "data": None
+                "data": str(e)
             }
     
     def delete_performance(p_id, p_edited_by):
@@ -118,7 +123,7 @@ class Performance_Service:
                 "message": message,
                 "success": False,
                 "status": code,
-                "data": None
+                "data": str(e)
             }
         except Exception as e:
             print(str(e))
@@ -128,5 +133,5 @@ class Performance_Service:
                 "message": message,
                 "success": False,
                 "status": code,
-                "data": None
+                "data": str(e)
             }

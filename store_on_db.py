@@ -5,6 +5,7 @@ from service.curso_service import Curso_Service
 from service.cadeira_service import Cadeira_Service
 from service.avaliacao_service import Avaliacao_Service
 from service.estudante_service import Estudante_Service
+from service.performance_service import Performance_Service
 
 app_config = Config()
 
@@ -61,11 +62,11 @@ def store_and_retrieve_avaliacao(row):
         return "failed"
 
 def store_and_retrieve_performance(row):
-    p_nota = row["p_nota"]
+    p_nota = row["nota"]
     p_eid = row["p_eid"]
     p_aid = row["p_aid"]
     
-    res = Avaliacao_Service.create_performance(
+    res = Performance_Service.create_performance(
         p_nota,
         p_eid,
         p_aid,
@@ -133,10 +134,15 @@ def store_students_on_db():
     # Save back to the same Excel file
     df.to_excel(app_config.STUDENTS_FILE_NAME, index=False)
 
+
 def store_performances_on_db():
     # Load the Excel files
     df_estudante = pd.read_excel(app_config.STUDENTS_FILE_NAME)
     df_avaliacao = pd.read_excel(app_config.AVALIACAO_FILE_NAME)
+
+    # Remove linhas onde a_id == 'failed'
+    df_avaliacao = df_avaliacao[df_avaliacao["a_id"] != "failed"]
+
     df = pd.read_excel(app_config.PERFORMANCE_FILE_NAME)
 
     # Map est_code -> est_id
@@ -157,8 +163,9 @@ def store_performances_on_db():
     df.to_excel(app_config.PERFORMANCE_FILE_NAME, index=False)
 
 
+
 # store_courses_on_db()
 # store_cadeiras_on_db()
 # store_avaliacoes_on_db()
-# store_performances_on_db()
+store_performances_on_db()
 # store_students_on_db()
