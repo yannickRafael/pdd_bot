@@ -5,4 +5,5 @@ cookies.*
 cursos.xlsx
 *xlsx*
 /files
-/backup_script/*
+*/backups
+cron.log
