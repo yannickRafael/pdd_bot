@@ -8,31 +8,32 @@ from login import do_login
 # Configuração
 app_config = Config()
 
-BASE_DISCIPLINAS_URL = "https://fenixlbg.isutc.ac.mz:9443/isutc/cursos/{}/paginas-de-disciplinas"
-BASE_AVALIACAO_URL = "https://fenixlbg.isutc.ac.mz:9443/isutc/disciplinas/{}/Ano%20Lectivo%202025/1-semestre/avaliacao"
-BASE_DOMAIN = "https://fenixlbg.isutc.ac.mz:9443"
-
+BASE_DISCIPLINAS_URL = app_config.BASE_DISCIPLINAS_URL
+BASE_AVALIACAO_URL = app_config.BASE_AVALIACAO_URL
+BASE_DOMAIN = app_config.BASE_DOMAIN
 # Link corrigido de performance (domínio final usado pelo estudante)
-BASE_PERFORMANCE = "https://fenixlbb.isutc.ac.mz:8443/isutc/publico/executionCourse.do?method=marks&executionCourseID={}"
+BASE_PERFORMANCE = app_config.BASE_PERFORMANCE
 
-COOKIES_FILE = "cookies.pkl"
+COOKIES_FILE = app_config.COOKIES_FILE_NAME
 
+# Read cookies and check session
 def load_authenticated_session():
     s = requests.Session()
     try:
         with open(COOKIES_FILE, 'rb') as f:
             cookies = pickle.load(f)
             s.cookies.update(cookies)
-        test = s.get("https://fenixlbg.isutc.ac.mz:9443/isutc/siteMap.do", timeout=5)
+        test = s.get(app_config.SITE_MAP_URL, timeout=5)
         if "Login" in test.text:
-            raise Exception("Sessão expirada")
+            raise Exception("Expired Session")
     except Exception:
-        print("Sessão inválida, autenticando novamente...")
+        print("Invalid Session, trying authentication...")
         s = do_login()
         with open(COOKIES_FILE, 'wb') as f:
             pickle.dump(s.cookies, f)
     return s
 
+# Get subjects from website
 def fetch_disciplinas():
     session = load_authenticated_session()
     cursos_df = pd.read_excel(app_config.COURSES_FILE_NAME)

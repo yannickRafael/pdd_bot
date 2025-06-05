@@ -23,6 +23,10 @@ class Config:
     DB_NAME = os.environ.get('DB_NAME')
     DB_USER = os.environ.get('DB_USER')
     DB_PASSWORD = os.environ.get('DB_PASSWORD')
+    BASE_DISCIPLINAS_URL = os.getenv('BASE_DISCIPLINAS_URL')
+    BASE_AVALIACAO_URL = os.getenv('BASE_AVALIACAO_URL')
+    BASE_DOMAIN = os.getenv('BASE_DOMAIN')
+    BASE_PERFORMANCE = os.getenv('BASE_PERFORMANCE')
 
     A_CODE_NOMES = {
         "TPC1": "Trabalho Para Casa 1",
