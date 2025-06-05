@@ -153,7 +153,11 @@ class Config:
         "P-NOTA-NV": {
             "message": "The provided score(%) is higher than the assessment max score",
             "code": 400
-        }
+        },
+        "P-NF": {
+            "message": "Performance with id % not found",
+            "code": 404
+        },
     }
 
     

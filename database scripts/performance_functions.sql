@@ -1,3 +1,35 @@
+CREATE OR REPLACE FUNCTION get_performance(
+    p_p_eid INTEGER,
+    p_p_aid INTEGER
+)
+RETURNS INTEGER AS $$
+DECLARE
+    v_p_id INTEGER;
+BEGIN
+    IF p_p_eid IS NULL THEN
+        RAISE EXCEPTION 'p_eid not provided'
+        USING ERRCODE = 'P0001', DETAIL = 'E-ID-MP';
+    END IF;
+    IF p_p_aid IS NULL THEN
+        RAISE EXCEPTION 'p_aid not provided'
+        USING ERRCODE = 'P0001', DETAIL = 'A-ID-MP';
+    END IF;
+
+    SELECT p_id INTO v_p_id
+    FROM p_performance
+    WHERE p_eid = p_p_eid AND p_aid = p_p_aid AND p_is_valid IS TRUE;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'No performance found for e_id % and a_id %', p_p_eid, p_p_aid
+        USING ERRCODE = 'P0001', DETAIL = 'P-NF';
+    END IF;
+
+    RETURN v_p_id;
+EXCEPTION WHEN OTHERS THEN  
+    RAISE;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION create_performance(
     p_p_nota INTEGER,
     p_p_eid INTEGER,
