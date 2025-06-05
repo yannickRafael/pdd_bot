@@ -158,6 +158,10 @@ class Config:
             "message": "Performance with id % not found",
             "code": 404
         },
+        "P-AE": {
+            "message": "Performance Already Exists",
+            "code": 409
+        }
     }
 
     
