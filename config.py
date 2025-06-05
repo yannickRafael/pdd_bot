@@ -132,6 +132,10 @@ class Config:
             "message": "a_id % not found or not valid",
             "code": 404
         },
+        "A-CODE-NF": {
+            "message": "a_code % not found or not valid",
+            "code": 404
+        },
 
         # Performance
         "P-NOTA-MP": {
