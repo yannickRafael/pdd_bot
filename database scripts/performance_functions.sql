@@ -53,6 +53,14 @@ BEGIN
 		USING ERRCODE = 'P0001', DETAIL = 'A-ID-MP';
     END IF;
 
+    IF EXISTS (
+        SELECT 1 FROM p_performance 
+        WHERE p_eid = p_p_eid AND p_aid = p_p_aid AND p_is_valid IS TRUE
+    ) THEN
+        RAISE EXCEPTION 'A performance record for e_id % and a_id % already exists', p_p_eid, p_p_aid
+        USING ERRCODE = 'P0001', DETAIL = 'P-AE';   
+    END IF;    
+
     IF NOT EXISTS (
 		SELECT 1 FROM e_estudante 
 		WHERE e_id = p_p_eid AND e_is_valid IS TRUE
