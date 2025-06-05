@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION get_avaliacao(p_a_code VARCHAR)
+CREATE OR REPLACE FUNCTION get_avaliacao(p_a_code VARCHAR, p_a_caid INTEGER)
 RETURNS INTEGER AS $$
 DECLARE
     v_a_id INTEGER;
@@ -8,11 +8,18 @@ BEGIN
         USING ERRCODE = 'P0001', DETAIL = 'A-CODE-MP';
     END IF;
 
+    IF p_a_caid IS NULL THEN
+        RAISE EXCEPTION 'a_caid not provided'
+        USING ERRCODE = 'P0001', DETAIL = 'CA-ID-MP';
+    END IF;
+
     SELECT a_id INTO v_a_id FROM a_avaliacao
-    WHERE a_code = p_a_code AND a_is_valid IS TRUE;
+    WHERE a_code = p_a_code 
+    AND a_caid = p_a_caid
+    AND a_is_valid IS TRUE;
 
     IF v_a_id IS NULL THEN
-        RAISE EXCEPTION 'a_code not found or not valid: %', p_a_code
+        RAISE EXCEPTION 'a_code not found or not valid for sibject id: % for %', p_a_code, p_a_caid
         USING ERRCODE = 'P0001', DETAIL = 'A-CODE-NF';
     END IF;
 
@@ -51,7 +58,9 @@ BEGIN
 
 	IF EXISTS(
 		SELECT 1 FROM a_avaliacao
-		WHERE a_code = p_a_code AND a_is_valid IS TRUE
+		WHERE a_code = p_a_code 
+        AND a_caid = p_a_caid
+        AND a_is_valid IS TRUE
 	) THEN 
 		RAISE EXCEPTION 'An Assessment with code: %, already exists', p_a_code
 	    USING ERRCODE = 'P0001', DETAIL = 'A-AE';
