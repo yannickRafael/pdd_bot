@@ -9,6 +9,7 @@ timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
 
 backup_path="/path/${timestamp}.backup"
 
+# /usr/pgsql-17/bin/pg_dump is the path to my pg_dump binary, replace with your actual path
 /usr/pgsql-17/bin/pg_dump \
   -U user \
   -h localhost \
