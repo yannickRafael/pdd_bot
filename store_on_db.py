@@ -34,11 +34,12 @@ def store_and_retrieve_avaliacao(row):
     a_nota_max = row['nota_max']
     
     res = Avaliacao_Service.create_avaliacao(
-        str(a_nome),
-        str(a_code),
+        a_nome,
+        a_code,
         a_caid,
         a_nota_max,
-        0 )
+        0 
+    )
     
     print('DEBUG: Avaliacao Service Response:', res)
     if res and bool(res.get("success")):
@@ -85,6 +86,7 @@ def store_avaliacoes_on_db():
 
     # Preenche a nova coluna com base no ca_code
     df_avaliacao["a_caid"] = df_avaliacao["ca_code"].map(code_to_id)
+    df_avaliacao.to_excel("TEST.xlsx", index=False)
 
     # Aplica a função de inserção
     df_avaliacao["a_id"] = df_avaliacao.apply(store_and_retrieve_avaliacao, axis=1)
