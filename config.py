@@ -41,7 +41,7 @@ class Config:
     }
 
     error_codes = {
-        # Estudante
+        # Student
         "E-AE": {
             "message": "Student Already Exists",
             "code": 409
@@ -63,7 +63,7 @@ class Config:
             "code": 404
         },
 
-        # Curso
+        # Course
         "CU-NOME-MP": {
             "message": "cu_nome not provided",
             "code": 400
@@ -85,7 +85,7 @@ class Config:
             "code": 409
         },
 
-        # Cadeira
+        # Subject
         "CA-NOME-MP": {
             "message": "ca_nome not provided",
             "code": 400
@@ -107,7 +107,7 @@ class Config:
             "code": 409
         },
 
-        # Avaliação
+        # Assessment
         "A-NOME-MP": {
             "message": "a_nome not provided",
             "code": 400
